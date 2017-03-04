@@ -1,5 +1,10 @@
 """
 Chord Graph
+
+Usage:
+
+g = ChordGraph()
+g.find_closest_normalized_chords((0, 1, 2)) # ((0, 3, 7),)
 """
 
 W1 = 1
@@ -75,15 +80,24 @@ class ChordGraph:
         return max(len_r, len_s)
 
     def distance_lb(self, r, s):
-        ## TODO: Is this correct?
         return W2 * abs(len(s) - len(r))
 
     def find_closest_normalized_chords(self, seq):
+        """
+        Finds the closest named chords to the input chord.
+
+        input: A seqence of integers representing a chord in the key of C.
+               The `normalOrder` property of the `music21.chord.Chord` class
+               is an appropriate input for this method.
+        output: A tuple of tuples containing the notes of the named chords
+                closest to the input, in the key of C.
+                It is my understanding theat these are the "normalized chords"
+                from the lecture notes.
+        """
         past = self._history.get(seq)
         if past:
             return past
         possible = self._find_candidates(seq)
-        print(len(possible), possible)
         closest = {}
         for p in possible:
             closest.setdefault(self.distance(seq, p), []).append(p)
