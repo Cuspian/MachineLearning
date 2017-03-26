@@ -67,7 +67,7 @@ def levenshteinish_distance(p, q):
 class ChordGraph:
     def __init__(self):
         self._history = {}
-        self.normalized_chords = generate_normalized_chords()
+        self.normalized_chords = tuple(generate_normalized_chords())
 
     def distance(self, r, s):
         return levenshteinish_distance(r, s)
