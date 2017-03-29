@@ -75,6 +75,25 @@ class ChordExtractor(object):
                 
         return self.normalizedPitches
     
+    
+    @staticmethod
+    def convertDurationToFloat(duration):
+        durationAsString = str(duration)
+        #find the part of the string after the " "; i.e. the number, and delete the > at the end
+        durationAsString = durationAsString.split(" ")[1].replace(">", "")
+        
+        #if the duration is a fraction, convert it to a decimal
+        
+        if "/" in durationAsString:
+            durationAsFloat = float(durationAsString[0]) / float(durationAsString[2])
+        #otherwise, keep it the same
+        else:
+            durationAsFloat = float(durationAsString)
+        
+        #keep only 2 decimal places.
+        durationAsFloat = round(durationAsFloat, 2)
+        return durationAsFloat
+        
     def getChordDurations(self):
         if self.chords:
             return
@@ -84,10 +103,14 @@ class ChordExtractor(object):
             if isinstance(chord, music21.chord.Chord):
                 duration = chord.duration #chord.duration is an object that 
                                           #represents how many quarter notes a chord lasts
-                self.chordDurations.append(duration.quarterLength) #quarterLength is the number itself
+                
+                #the problem is that duration objects that aren't multiples of 4 display as Fraction objects.
+                #to avoid this problem, parse the string representation of the object before creating vector.
+                durationNumber = ChordExtractor.convertDurationToFloat(duration)
+                self.chordDurations.append(durationNumber) #quarterLength is the number itself
         return self.chordDurations
-        
-        
+    
+   
         
         
     ##TODO: figure out where the key signature is in the midi file parsed. 
